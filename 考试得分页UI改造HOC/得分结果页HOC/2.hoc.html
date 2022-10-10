@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+    <style>
+        .result-wrapper {
+            width: 880px;
+            height: 696px;
+            background-color: #fff;
+            position: relative;
+            z-index: 2;
+            padding-top: 83px;
+        }
+
+        .result-wrapper .header {
+            margin-left: 350px;
+            font-size: 22px;
+            font-weight: 800;
+            color: rgba(0, 0, 0, 0.9);
+            line-height: 22px;
+        }
+
+        .result-wrapper .container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-top: 25px;
+            margin-left: 239px;
+            width: 337px;
+            height: 158px;
+        }
+
+        .result-wrapper .container .bg {
+            width: 337px;
+            height: 158px;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+
+        .result-wrapper .container .tip {
+            margin-left: 120px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #6a7487;
+            line-height: 18px;
+        }
+
+        .result-wrapper .container .score-container {
+            margin-left: 70px;
+            margin-top: 33px;
+            font-size: 30px;
+            font-weight: 400;
+            color: #000;
+            line-height: 48px;
+        }
+
+        .result-wrapper .container .score-container .score {
+            width: 86px;
+            height: 80px;
+            font-size: 80px;
+            font-family: DIN-Medium, DIN;
+            font-weight: 500;
+            color: #fe8836;
+            margin-right: 9px;
+            line-height: 80px;
+        }
+
+        .result-wrapper .exam-info {
+            margin-top: 38px;
+            margin-left: 64px;
+        }
+
+        .result-wrapper .exam-info .title {
+            margin-left: 11px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            line-height: 16px;
+        }
+
+        .result-wrapper .exam-info .table {
+            margin-top: 12px;
+            width: 752px;
+        }
+
+        .result-wrapper .btn {
+            margin-top: 40px;
+            margin-left: 338px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 220px;
+            height: 52px;
+            background: #FE8836;
+            border-radius: 10px 10px 10px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 19px;
+        }
+
+        .exam-result-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 880px;
+            height: 696px;
+            z-index: -1;
+        }
+
+        .wrapper {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+
+        <div class="wrapper">
+            <class-course-test :score-info="scoreInfo1" :is-growth="true"></class-course-test>
+            <exam-student-score :info="scoreInfo2" :from="false"></exam-student-score>
+        </div>
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+    <script src="./config.js"></script>
+    <script>
+        const { Table } = iview
+        Vue.component('Table', Table)
+
+        const baseScoreView = { //视图组件不掺杂任何逻辑 （班课+成长课/考试+测试）不同的地方渲染，跳转逻辑不同，在一个组件里写要4个if且逻辑混杂
+            props: ['info', 'columns', 'callback'],
+            template: `
+            <div class="result-wrapper">
+                <div>
+                    <div class="header">恭喜您完成考试</div>
+                    <div class="container">
+                        <img class="bg" src="./img/score-bg.png">
+                        <div class="tip">快来看您的成绩~</div>
+                        <div class="score-container text-center"><span class="score">{{info.stuScore}}</span>分</div>
+                    </div>
+                    <div class="exam-info">
+                        <div class="title to" :title="info.testName">
+                            {{info.testName}}
+                        </div>
+                        <Table stripe :columns="columns" :data="[info]" class="table"></Table>
+                    </div>
+                    <div class="btn cp" @click="callback">
+                        查看试题分析
+                    </div>
+
+                </div>
+                <img class="exam-result-bg" src="./img/exam-result-bg.png">
+            </div>
+            `,
+        }
+
+        const withHandler = function (view, params) {
+            const { props, events } = params
+            return {
+                props: ['from', 'info', 'scoreInfo', 'isGrowth'], //不通用，按理说，参数是要保持一致的,这是适配的办法,或者说是兼容的办法
+                data() { //公共数据
+                    return {
+                        loading: false,
+                    }
+                },
+                methods: { //与方法
+
+                },
+                created() { 
+                    // console.log(this.from);
+                    // console.log(this.scoreInfo);
+                    // console.log(props.key);
+                    // console.log(this[props.key]);
+                    this.loading = !_.isEmpty(this[props.key])
+                },
+                render(h) {
+                    // const newProps = {
+                    //     info: this[props.key],
+                    //     columns: props.columns,
+                    //     callback: events.tosee.bind(this),
+                    // }
+                    const args = {
+                        props: {
+                            info: this[props.key],
+                            columns: props.columns,
+                            callback: events.toAnalysis.bind(this),
+                        },
+                    }
+                    const wrapper = h('div', null, [
+                        this.loading ? h(view, args) : null
+                    ])
+                    return wrapper
+                }
+            }
+        }
+        const classCourseTest = withHandler(baseScoreView, {
+            props: {
+                // info: scoreInfo1,
+                key: 'scoreInfo',
+                columns: columns1,
+            },
+            events: {
+                toAnalysis() {
+                    alert( `这是班课页面，来自成长课是: ${this.isGrowth},执行班课且非成长课跳转逻辑`)
+                    const testPaperId = this.$route.query.dataId
+                    const query = this.isGrowth ? {
+                        type: 'growth',
+                        growthId: this.$route.query.growthId,
+                        courseId: this.$route.query.courseId,
+                        chapterId: this.$route.query.chapterId,
+                        chapterDetailId: this.$route.query.chapterDetailId,
+                        dataId: this.$route.query.dataId
+                    } : {
+                        type: 'class',
+                        classId: this.$route.query.classId,
+                        courseId: this.$route.query.courseId,
+                        chapterId: this.$route.query.chapterId,
+                        chapterDetailId: this.$route.query.chapterDetailId,
+                        dataId: this.$route.query.dataId
+                    }
+                    const { href } = this.$router.resolve({
+                        path: `/test/student/${testPaperId}/result-detail`,
+                        query
+                    })
+                    window.open(href, '_blank');
+                }
+            }
+        });
+        const examStudentScore = withHandler(baseScoreView, {
+            props: {
+                // info: scoreInfo2,
+                key: 'info',
+                columns: columns2,
+            },
+            events: {
+                toAnalysis() {
+                    alert( `这是考试页面，来自测试是: ${this.from},执行考试相关逻辑`)
+                    if (this.from === 'exam') {
+                        this.$router.push({
+                            path: `/exam/student/${this.$route.params.examId}/result-detail`
+                        });
+                    } else if (this.from === 'test') {
+                        STUDENT_FINISH_TEST_DETAIL(this.$route.params.testId)
+                    }
+                }
+            }
+        })
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+                classCourseTest,
+                examStudentScore,
+            },
+            data() {
+                return {
+                    scoreInfo1,
+                    scoreInfo2,
+                }
+            },
+            created() {
+
+            },
+            methods: {
+
+            },
+        })
+    </script>
+</body>
+
+</html>

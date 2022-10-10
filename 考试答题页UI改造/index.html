@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="root">
+
+
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+
+    <script src="./data.js"></script>
+    <script>
+        console.log('source', data);
+        const { Table } = iview
+        Vue.component('Table', Table)
+
+
+        function init1(params) {
+            function format(item, index) {
+                const newItem = _.cloneDeep(item)
+                delete newItem.examTopicId
+                return {
+                    id: item.examTopicId,
+                    ...newItem
+                }
+                console.log(item.examTopicId, index);
+            }
+            return _.map(params, format)
+        }
+
+        function init2(params) {
+            return _.map(params, (c0, i0) => {
+                return {
+                    ...c0,
+                    options: _.map(c0.options, (c1, i1) => {
+                        return {
+                            id: c1.optionId,
+                            ...c1,
+                        }
+                    })
+                }
+            })
+        }
+
+        function format(params) {
+            function lay1(pitem, pindex) {
+                const item= _.cloneDeep(pitem)
+                delete item.examTopicId
+                return {
+                    id: pitem.examTopicId,
+                    ...item,
+                    options: _.map(pitem.options, lay2)
+                }
+            }
+
+            function lay2(citem, cindex) {
+                const item= _.cloneDeep(citem)
+                delete item.optionId
+                return {
+                    id: citem.optionId,
+                    ...item,
+                }
+            }
+
+            return _.map(params, lay1)
+        }
+        const data1 = init1(data)
+        const data2 = init2(data1)
+
+        const targetData= format(data)
+        console.log('targetData',targetData);
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+            },
+            data() {
+                return {
+
+                }
+            },
+            created() {
+
+            },
+            methods: {
+
+            },
+        })
+    </script>
+</body>
+
+</html>

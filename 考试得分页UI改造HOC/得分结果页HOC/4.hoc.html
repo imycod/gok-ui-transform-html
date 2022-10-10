@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+    <style>
+        .result-wrapper {
+            width: 880px;
+            height: 696px;
+            background-color: #fff;
+            position: relative;
+            z-index: 2;
+            padding-top: 83px;
+        }
+
+        .result-wrapper .header {
+            margin-left: 350px;
+            font-size: 22px;
+            font-weight: 800;
+            color: rgba(0, 0, 0, 0.9);
+            line-height: 22px;
+        }
+
+        .result-wrapper .container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            margin-top: 25px;
+            margin-left: 239px;
+            width: 337px;
+            height: 158px;
+        }
+
+        .result-wrapper .container .bg {
+            width: 337px;
+            height: 158px;
+            position: absolute;
+            left: 0;
+            right: 0;
+        }
+
+        .result-wrapper .container .tip {
+            margin-left: 120px;
+            font-size: 18px;
+            font-weight: 500;
+            color: #6a7487;
+            line-height: 18px;
+        }
+
+        .result-wrapper .container .score-container {
+            margin-left: 70px;
+            margin-top: 33px;
+            font-size: 30px;
+            font-weight: 400;
+            color: #000;
+            line-height: 48px;
+        }
+
+        .result-wrapper .container .score-container .score {
+            width: 86px;
+            height: 80px;
+            font-size: 80px;
+            font-family: DIN-Medium, DIN;
+            font-weight: 500;
+            color: #fe8836;
+            margin-right: 9px;
+            line-height: 80px;
+        }
+
+        .result-wrapper .exam-info {
+            margin-top: 38px;
+            margin-left: 64px;
+        }
+
+        .result-wrapper .exam-info .title {
+            margin-left: 11px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+            line-height: 16px;
+        }
+
+        .result-wrapper .exam-info .table {
+            margin-top: 12px;
+            width: 752px;
+        }
+
+        .result-wrapper .btn {
+            margin-top: 40px;
+            margin-left: 338px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 220px;
+            height: 52px;
+            background: #FE8836;
+            border-radius: 10px 10px 10px 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #fff;
+            line-height: 19px;
+        }
+
+        .exam-result-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 880px;
+            height: 696px;
+            z-index: -1;
+        }
+
+        .wrapper {
+            display: flex;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        <div class="wrapper">
+            <class-course-test></class-course-test>
+            <!-- <exam-student-score></exam-student-score> -->
+        </div>
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+    <script src="./config.js"></script>
+    <script>
+        const { Table } = iview
+        Vue.component('Table', Table)
+
+        const baseScoreView = { 
+            props: ['info', 'columns', 'callback'],
+            template: `
+            <div class="result-wrapper">
+                <div>
+                    <div class="container">
+                        <img class="bg" src="./img/score-bg.png">
+                        <div class="tip">快来看您的成绩~</div>
+                        <div class="score-container text-center"><span class="score">{{info.stuScore}}</span>分</div>
+                    </div>
+                    <div class="exam-info">
+                        <div class="title to" :title="info.testName">
+                            {{info.testName}}
+                        </div>
+                        <Table stripe :columns="columns" :data="[info]" class="table"></Table>
+                    </div>
+                    <div class="btn cp" @click="callback">
+                        查看试题分析
+                    </div>
+
+                </div>
+                <img class="exam-result-bg" src="./img/exam-result-bg.png">
+            </div>
+            `,
+        }
+
+        const withHandler = function (view, params) {
+            const { props, events } = params
+            return {
+                data() {
+                    return {
+                        loading: true,
+                    }
+                },
+                methods: {
+
+                },
+                created() {
+                },
+                render(h) {
+                    const args = {
+                        props: {
+                            columns: props.columns,
+                            info: events.init.call(this),
+                            callback: events.callback.bind(this),
+                        },
+                    }
+                    const wrapper = h('div', null, [
+                        this.loading ? h(view, args) : null
+                    ])
+                    return wrapper
+                }
+            }
+        }
+
+        const classCourseTest = withHandler(baseScoreView, {
+            props: {
+                columns: columns1,
+            },
+            events: {
+                init() {
+                    return this.$parent.scoreInfo1
+                },
+                callback() {
+                    alert(`这是班课页面，来自成长课是: ${this.isGrowth},执行班课且非成长课跳转逻辑`)
+                }
+            }
+        })
+        const vm = new Vue({
+            el: "#root",
+            components: {
+                classCourseTest: classCourseTest
+            },
+            data() {
+                return {
+                    scoreInfo1,
+                }
+            },
+            created() {
+
+            },
+            methods: {
+
+            },
+        })
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+    <link rel="stylesheet" href="./index.css">
+</head>
+
+<body>
+    <div id="root">
+        <exam-score :show="info.showCheckDetailBtn" :info="info" :from="'exam'"></exam-score>
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+    <script src="./dayjs.min.js"></script>
+    <script src="./config.js"></script>
+    <script>
+        const { Table } = iview
+        Vue.component('Table', Table)
+
+
+        function timeToDay(time) {
+            let result = '';
+            // 定义变量 d,h,m保存倒计时的时间
+            let day, h, m, s;
+            if (time > 0) {
+                day = Math.floor(time / 1000 / 60 / 60 / 24);
+                h = Math.floor(time / 1000 / 60 / 60 % 24);
+                m = Math.floor(time / 1000 / 60 % 60);
+                s = Math.floor(time / 1000 % 60);
+            }
+            if (day > 0) {
+                result += day + '天';
+            }
+            if (h > 0) {
+                result += h + '小时';
+            }
+            if (m > 0) {
+                result += m + '分';
+            }
+            if (s > 0) {
+                result += s + '秒';
+            }
+            return result;
+        }
+        function timestampFormat(value) {
+            return dayjs(Number(value)).format('YYYY-MM-DD HH:mm:ss');
+        }
+
+
+        // base view
+        const view = {
+            name: 'base-view',
+            props: ['info', 'columns', 'callback', 'show'],
+            template: `
+            <div class="result-wrapper">
+                <div>
+                <div class="header">{{info.title}}</div>
+                <div class="container">
+                    <img class="bg" src="./img/score-bg.png">
+                    <div class="tip">{{info.tip}}</div>
+                    <div class="score-container text-center"><span class="score">{{info.score}}</span>分</div>
+                </div>
+                <div class="exam-info">
+                    <div class="title to" :title="info.name">
+                    {{info.name}}
+                    </div>
+                    <Table stripe :columns="columns" :data="[info]" class="table"></Table>
+                </div>
+                <div class="btn cp" v-show="show" @click="callback">
+                    {{info.btnText}}
+                </div>
+
+                </div>
+                <img class="exam-result-bg" src="./img/exam-result-bg.png">
+            </div>
+            `,
+        }
+
+
+        const withHandler = function (view, params) {
+            const { props, events } = params
+            return {
+                //不通用，按理说，参数是要保持一致的,这是适配的办法,或者说是兼容的办法
+                props: ['from', 'info', 'scoreInfo', 'isGrowth', 'show'],
+                data() { //公共数据
+                    return {
+                        loading: true,
+                    }
+                },
+                methods: { //与方法
+                    ...events,
+                },
+                created() {
+                    // console.log(this[props.key])
+                },
+                render(h) {
+                    const args = {
+                        props: {
+                            info: events.initData.call(this),
+                            columns: props.columns,
+                            callback: events.toAnalysis.bind(this),
+                            show: this.show === 0 ? false : true,
+                        },
+                    }
+                    const wrapper = h('div', null, [
+                        this.loading ? h(view, args) : null
+                    ])
+                    return wrapper
+                }
+            }
+        }
+
+
+        const examScore = withHandler(view, {
+            props: {
+                key: 'info',
+                columns: examOrTestColumns,
+            },
+            events: {
+                initData() {
+                    this.info = Object.assign(this.info, {
+                        title: '恭喜您完成考试',
+                        tip: '快来看您的成绩~',
+                        btnText: '查看试题分析',
+                    })
+                    return this.formatData()
+                },
+                /**
+                 * @description: 格式化数据
+                 * @return {void}
+                 * 交卷时间格式化以及用时格式化以及百分比
+                 */
+                formatData() {
+                    const info = _.cloneDeep(this.info)
+                    info.spentTime = timeToDay(info.spentTime)
+                    info.submitTime = timestampFormat(info.submitTime)
+                    // info.correctRate += '%'
+                    // info.scoreRete += '%'
+
+                    return info
+                },
+                toAnalysis() {
+                    if (this.from === 'exam') {
+                        this.$router.push({
+                            path: `/exam/student/${this.$route.params.examId}/result-detail`
+                        });
+                    } else if (this.from === 'test') {
+                        STUDENT_FINISH_TEST_DETAIL(this.$route.params.testId)
+                    }
+                }
+            }
+        })
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+                examScore,
+            },
+            data() {
+                return {
+                    info: scoreInfo1,
+                }
+            },
+            created() {
+
+            },
+            methods: {
+
+            },
+        })
+    </script>
+</body>
+
+</html>

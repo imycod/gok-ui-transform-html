@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <div id="root">
+        {{msg}}
+        <parsing-card></parsing-card>
+
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+
+    <script src="./data.js"></script>
+
+    <script type="text/x-template" id="parsingCard">
+        <div class="card m-b-24" :id="index">
+            <p class="m-b-16 testType between">
+              {{ index + 1 }}.{{ testType }}
+              <!-- 答题才有这张图片 -->
+              <template v-if="requireNum">
+              <!-- <template v-if="requireNum && mode"> -->
+                <!-- 是否收藏过 （点击不收藏 0） -->
+                <img
+                  v-if="isCollect"
+                  src="~@img/driving-range/parsing/parsing-collect.png"
+                  alt=""
+                  @click="collect(0)"
+                />
+                <!-- 点击收藏 1 -->
+                <img
+                  v-else
+                  src="~@img/driving-range/parsing/parsing-uncollect.png"
+                  alt=""
+                  @click="collect(1)"
+                />
+              </template>
+            </p>
+            <div class="m-b-26" v-html="item.name"></div>
+            <div class="option-card">
+              <div>
+                <!-- 单选和多选题 -->
+                <template v-if="item.type === 'SINGLE' || item.type === 'MULTI'">
+                  <!-- 查看答案 -->
+                  <options-card
+                    ref="optionsCard"
+                    v-for="(optionsData, index) in item.options"
+                    :key="optionsData.optionId"
+                    :id="item.id"
+                    :optionsData="optionsData"
+                    :fromCharCode="fromCharCode(index)"
+                    :parsingSort="parsingSort"
+                    :myAnswer="myAnswer()"
+                    :currentIndex="selectId.includes(optionsData.optionId)"
+                    @click.native="replaceIndex(optionsData.optionId)"
+                  />
+                </template>
+                <!-- 判断题 -->
+                <template v-if="item.type === 'TF'">
+                  <judge-card
+                    v-for="judge in judgeOption"
+                    :key="judge.value"
+                    :judge="judge"
+                    :item="item"
+                    :currentIndex="selectId.includes(judge.value)"
+                    @click.native="replaceIndex(judge.value)"
+                  />
+                </template>
+              </div>
+            </div>
+            <!-- 没有抽题数量，说明是来看答案的，展示答案 -->
+        
+          </div>
+    </script>
+
+    <script>
+        const { Table } = iview
+        Vue.component('Table', Table)
+
+
+        function format(params) {
+            function lay1(pitem, pindex) {
+                const item = _.cloneDeep(pitem)
+                delete item.examTopicId
+                return {
+                    id: pitem.examTopicId,
+                    ...item,
+                    options: _.map(pitem.options, lay2)
+                }
+            }
+
+            function lay2(citem, cindex) {
+                const item = _.cloneDeep(citem)
+                delete item.optionId
+                return {
+                    id: citem.optionId,
+                    ...item,
+                }
+            }
+
+            return _.map(params, lay1)
+        }
+        const targetData = format(data)
+        console.log('targetData', targetData);
+
+
+        Vue.component('parsing-card',{
+            template:`#parsingCard`
+        })
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+             
+            },
+            data() {
+                return {
+                    msg:'hello',
+                }
+            },
+            created() {
+
+            },
+            methods: {
+
+            },
+        })
+    </script>
+</body>
+
+</html>

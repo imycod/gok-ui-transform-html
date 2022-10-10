@@ -1,0 +1,105 @@
+.result-wrapper {
+    width: 880px;
+    height: 696px;
+    background-color: #fff;
+    position: relative;
+    z-index: 2;
+    padding-top: 83px;
+}
+
+.result-wrapper .header {
+    margin-left: 350px;
+    font-size: 22px;
+    font-weight: 800;
+    color: rgba(0, 0, 0, 0.9);
+    line-height: 22px;
+}
+
+.result-wrapper .container {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin-top: 25px;
+    margin-left: 239px;
+    width: 337px;
+    height: 158px;
+}
+
+.result-wrapper .container .bg {
+    width: 337px;
+    height: 158px;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+.result-wrapper .container .tip {
+    margin-left: 120px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #6a7487;
+    line-height: 18px;
+}
+
+.result-wrapper .container .score-container {
+    margin-left: 70px;
+    margin-top: 33px;
+    font-size: 30px;
+    font-weight: 400;
+    color: #000;
+    line-height: 48px;
+}
+
+.result-wrapper .container .score-container .score {
+    width: 86px;
+    height: 80px;
+    font-size: 80px;
+    font-family: DIN-Medium, DIN;
+    font-weight: 500;
+    color: #fe8836;
+    margin-right: 9px;
+    line-height: 80px;
+}
+
+.result-wrapper .exam-info {
+    margin-top: 38px;
+    margin-left: 64px;
+}
+
+.result-wrapper .exam-info .title {
+    margin-left: 11px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    line-height: 16px;
+}
+
+.result-wrapper .exam-info .table {
+    margin-top: 12px;
+    width: 752px;
+}
+
+.result-wrapper .btn {
+    margin-top: 40px;
+    margin-left: 338px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 220px;
+    height: 52px;
+    background: #FE8836;
+    border-radius: 10px 10px 10px 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    line-height: 19px;
+}
+
+.exam-result-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 880px;
+    height: 696px;
+    z-index: -1;
+}
