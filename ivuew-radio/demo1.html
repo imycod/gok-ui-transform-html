@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
+</head>
+
+<body>
+    <div id="root">
+        {{unorderedType}}
+        <radio-group v-model="animal">
+            <radio label="金斑蝶"></radio>
+            <radio label="爪哇犀牛"></radio>
+            <radio label="印度黑羚"></radio>
+        </radio-group>
+        <radio-group class="flex flex-row  between" v-model="unorderedType"
+            @on-change="immdediteSendSet('formValidate')">
+            <radio class="" v-for="(item,index) in template.radios" :key="index" :label="item.key">{{item.label}}</radio>
+        </radio-group>
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/iview/2.14.0/iview.min.js'></script>
+    <script>
+        const { RadioGroup, Radio } = iview
+        Vue.component('RadioGroup', RadioGroup)
+        Vue.component('Radio', Radio)
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+
+            },
+            data() {
+                return {
+                    animal: '爪哇犀牛',
+                    unorderedType: 'N',
+                    template: {
+                        radios: [
+                            {
+                                label: '按题型随机',
+                                key: 'N',
+                            },
+                            {
+                                label: '完全随机',
+                                key: 'Y',
+                            },
+                        ]
+                    }
+                }
+            },
+            created() {
+
+            },
+            methods: {
+                immdediteSendSet(type) {
+
+                }
+            },
+        })
+    </script>
+</body>
+
+</html>
