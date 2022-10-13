@@ -8,6 +8,7 @@
     <title>Document</title>
     <link rel='stylesheet' href='https://cdn.bootcss.com/iview/2.14.0/styles/iview.css' />
     <style>
+    
         .hvr-grow-shadow {
             display: inline-block;
             vertical-align: middle;
@@ -33,8 +34,10 @@
         .hvr-shadow:focus,
         .hvr-shadow:active {
             box-shadow: 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+            /* transition可以一开始就作用在要被触发的元素上 */
             transition: all 0.2s ease-in-out;
-            transform: translate3d(0, -5px, 5px);
+            /* 可以触发时改变形状和位置 */
+            transform: translate3d(0, -5px, 5px); 
         }
 
         .bd {
