@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/view-design@4.7.0/dist/styles/iview.css">
+</head>
+
+<body>
+    <div id="root">
+        <i-circle :percent="percent" dashboard :stroke-color="['#FB771A','#FFBA4E']">
+            <span class="demo-circle-inner" style="font-size:24px">{{percent}}%</span>
+        </i-circle>
+    </div>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/view-design@4.7.0/dist/iview.min.js"></script>
+    
+    <script>
+        const { Circle } = iview
+        Vue.component('i-circle', Circle)
+
+        const vm = new Vue({
+            el: "#root",
+            components: {
+
+            },
+            data() {
+                return {
+                    percent:68,
+                }
+            },
+            created() {
+
+            },
+            methods: {
+             
+            },
+        })
+    </script>
+</body>
+
+</html>
