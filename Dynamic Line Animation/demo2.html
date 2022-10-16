@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .bd {
+            border: 1px solid black;
+        }
+
+        .card {
+            width: 1000px;
+            height: 403px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .item {
+            width: 300px;
+            height: 400px;
+        }
+
+        .line {
+            width: 0px;
+            height: 3px;
+            transition: all 0.3s;
+            background-color: red;
+            position: absolute;
+            bottom: 0px;
+            left: 0px;
+        }
+
+        .item:hover {
+            cursor: pointer;
+            background: blue;
+        }
+
+        .card:hover .line {
+            width: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card bd">
+        <div class="item bd">1</div>
+        <div class="item bd">2</div>
+        <div class="item bd">3</div>
+        <div class="line"></div>
+    </div>
+</body>
+
+</html>

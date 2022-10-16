@@ -7,13 +7,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
-        .bd {
-            border: 1px solid black;
+        @import url('https://fonts.googleapis.com/css?family=Dancing+Script|Reenie+Beanie|Sacramento');
+
+        body {
+            background: #1a1a1a;
+            text-align: center;
+            color: white;
+            padding: 70px;
         }
+
+        .title {
+            font-size: 70px;
+            font-family: 'Sacramento', cursive;
+        }
+
+        .subtitle {
+            margin-top: -30px;
+            margin-left: -80px;
+            padding-bottom: 60px;
+            font-size: 43px;
+            font-family: 'Reenie Beanie', cursive;
+            opacity: 0.6;
+        }
+
+        /*********************************************************
+********************** START STYLING *********************
+*********************************************************/
 
         .list {
             position: relative;
             display: inline-block;
+
         }
 
         .list .item {
@@ -22,12 +46,21 @@
             width: 60px;
             color: #979797;
             font-family: Arial;
+            -webkit-transition: all 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 100ms;
+            -moz-transition: all 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 100ms;
+            -ms-transition: all 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 100ms;
+            /* IE10 is actually unprefixed */
+            -o-transition: all 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 100ms;
+            transition: all 150ms cubic-bezier(0.4, 0.0, 0.2, 1) 100ms;
             text-transform: uppercase;
             font-size: 12px;
             font-weight: bold;
             cursor: pointer;
             box-sizing: border-box;
-            position: relative;
+        }
+
+        .list .item.active {
+            color: white;
         }
 
         .list .line {
@@ -35,11 +68,6 @@
             bottom: 0;
             height: 3px;
             background: #ff0072;
-        }
-
-        .list .line__isFirst {
-            width: 0px;
-            transition: all 0.3s;
         }
 
         .animation {
@@ -59,25 +87,45 @@
             -o-transition: right 200ms cubic-bezier(0.4, 0.0, 0.2, 1), left 200ms cubic-bezier(0.4, 0.0, 0.2, 1) 70ms;
             transition: right 200ms cubic-bezier(0.4, 0.0, 0.2, 1), left 200ms cubic-bezier(0.4, 0.0, 0.2, 1) 70ms;
         }
+
+         .list[data-current="0"] .line {
+            left: 10px;
+            right: 250px;
+        }
+
+        .list[data-current="1"] .line {
+            left: 90px;
+            right: 170px;
+        }
+
+        .list[data-current="2"] .line {
+            left: 170px;
+            right: 90px;
+        }
+
+        .list[data-current="3"] .line {
+            left: 250px;
+            right: 10px;
+        } 
     </style>
 </head>
 
 <body>
-
     <div id="root">
+        <div class="title">Material Design Menu</div>
+        <div class="subtitle">Line Animation</div>
+
         <div class="cont">
-            <div class="list" data-current="0">
-                <!--  @mouseout="(e)=>setCurrentItem(e,index,'out')" -->
-                <div class="item" @mouseenter="(e)=>setCurrentItem(e,index,'enter')"
-                    @click="(e)=>setCurrentItem(e,index)" v-for="(name,index) in list" :key="index">
-                    {{name}}
-                </div>
-                <div class="line line__isFirst" :style="lineStyle"></div>
+            <div class="list" data-current="1">
+                <div class="item" :class="index==1 && 'active'" @click="(e)=>setCurrentItem(e,index)"
+                    v-for="(name,index) in list" :key="index">{{name}}</div>
+                <div class="line"></div>
             </div>
         </div>
     </div>
-    <!-- <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script> -->
-    <script src="../vue.min.js"></script>
+    <script src='https://cdn.bootcss.com/vue/2.5.16/vue.min.js'></script>
+    <script src='https://cdn.bootcss.com/lodash.js/4.17.10/lodash.min.js'></script>
+    <script src="https://cdn.jsdelivr.net/npm/mockjs@1.1.0/dist/mock.min.js"></script>
     <script>
         const vm = new Vue({
             el: "#root",
@@ -90,11 +138,8 @@
                         'Second',
                         'Third',
                         'Fourth',
-                        'five',
-
                     ],
-                    lineStyle: {},
-                    isFirst: true,
+                    lineStyle:null,
                 }
             },
             computed: {
@@ -104,17 +149,12 @@
 
             },
             methods: {
-                setCurrentItem(event, num, type) {
-                    const { offsetParent, offsetLeft, clientWidth } = event.target
+                lineStyle(index) {
+                    return this.data
+                },
+                setCurrentItem(event, num) {
 
-                    if (this.isFirst && type == 'enter') {
-                        this.lineStyle = {
-                            width: '60px',
-                            left: offsetLeft + 'px',
-                        }
-                        this.isFirst = false
-                        return
-                    }
+                    const { offsetParent, offsetLeft, clientWidth } = event.target
                     // 父级宽度
                     const parentWidth = offsetParent.clientWidth
                     const offsetRight = parentWidth - offsetLeft - clientWidth
@@ -123,9 +163,13 @@
                         right: offsetRight + 'px',
                     }
 
+                    console.log('----------------->', { offsetLeft, offsetRight });
+
                     var currentElement = document.getElementsByClassName('list')[0];
                     var oldNum = parseInt(currentElement.getAttribute('data-current'));
                     currentElement.setAttribute('data-current', num);
+                    console.log(oldNum)
+                    console.log(num)
 
                     if (oldNum > num) {
                         document.getElementsByClassName('line')[0].className = 'line animation';
