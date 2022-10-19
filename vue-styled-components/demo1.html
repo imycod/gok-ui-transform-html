@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.21/dist/vue.js"></script>
+    <script src="https://unpkg.com/babel-standalone@6.26.0/babel.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue-styled-components@1.6.0/dist/vue-styled-components.min.js"></script>
+</head>
+<body>
+<div id="root">
+    <super-custom-title :visible="1" color="blue">这是一段文本</super-custom-title>
+</div>
+<script type="text/babel">
+
+    const MyComponent = {
+        props: ['visible'],
+        template: `
+          <h1>
+          <slot/>
+          </h1>`
+    }
+    const SuperCustomTitle = styled.default(MyComponent, {color: String})`
+      color: ${props => props.color || 'red'};
+      opacity: ${props => props.visible ? 1 : 0};
+    `
+
+    const vm = new Vue({
+        el: '#root',
+        data() {
+            return {
+                msg: 'hello',
+            }
+        },
+        computed: {
+
+        },
+        components: {
+            SuperCustomTitle,
+        },
+    })
+</script>
+</body>
+</html>
